@@ -1,5 +1,5 @@
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Literal
 
 
@@ -20,10 +20,10 @@ AllergenStatus = Literal[
 
 
 class MenuItemCreate(BaseModel):
+    restaurant_id: int = Field(gt=0)
+
     name: str = Field(min_length=2, max_length=100)
-
     description: str = Field(min_length=5)
-
     price: float = Field(gt=0)
 
     category: Literal[
@@ -36,33 +36,21 @@ class MenuItemCreate(BaseModel):
     is_vegetarian: bool
 
     ingredients: list[str] = Field(min_length=1)
-
-    dietary_tags: list[DietaryTag] = Field(
-        default_factory=list
-    )
-
-    allergens: dict[str, AllergenStatus] = Field(
-        default_factory=dict
-    )
+    dietary_tags: list[DietaryTag] = Field(default_factory=list)
+    allergens: dict[str, AllergenStatus] = Field(default_factory=dict)
 
 
 class MenuItemResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
-
+    restaurant_id: int
     name: str
-
     description: str
-
     price: float
-
     category: str
-
     is_vegetarian: bool
-
     ingredients: list[str]
-
     dietary_tags: list[str]
-
     allergens: dict[str, str]
-
     is_available: bool
